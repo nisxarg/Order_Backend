@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChefS Interface</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #F5E4D7; /* Light peach */
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #EF8354; /* Coral */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2B2D42; /* Dark blue-gray */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #2B2D42; /* Dark blue-gray */
+            padding: 8px;
+            text-align: left;
+            color: #2B2D42; /* Dark blue-gray */
+        }
+
+        th {
+            background-color: #ffffff; /* Coral */
+            color: #000000; /* Light coral */
+        }
+
+        tr:nth-child(even) {
+            background-color: #90BE6D; /* Mint */
+        }
+
+        tr:nth-child(odd) {
+            background-color: #F5E4D7; /* Light peach */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ORDERS RECIEVED</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Table Number</th>
+                    <th>Items</th>
+                </tr>
+            </thead>
+            <tbody id="orders"></tbody>
+        </table>
+    </div>
+
+    <script>
+        const ordersContainer = document.getElementById('orders');
+
+        const ws = new WebSocket('ws://localhost:8080');
+
+        ws.onopen = () => {
+            console.log('Connected to WebSocket server');
+        };
+
+        ws.onmessage = (event) => {
+            const orderDetails = JSON.parse(event.data);
+            const orderElement = document.createElement('tr');
+            orderElement.innerHTML = `<td>${orderDetails.tableNumber}</td><td>${orderDetails.items.map(item => `${item.name} ($${item.price})`).join('<br>')}</td>`;
+            ordersContainer.appendChild(orderElement);
+        };
+    </script>
+</body>
+</html>
